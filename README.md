@@ -1,73 +1,103 @@
-# React + TypeScript + Vite
+# 🚀 Full Stack Demo — CI/CD & Security Setup (Heute)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Dieses Repo zeigt eine moderne **Full-Stack Demo** mit **professionellem Dev-Workflow** (CI/CD + Security).  
+Fokus: **Monorepo**, **Quality Gates**, **SAST (CodeQL)** und **saubere Server-Struktur**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✅ Was heute umgesetzt wurde
 
-## React Compiler
+### 🔧 CI/CD mit GitHub Actions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 🔁 **CI Pipeline** via `.github/workflows/ci.yml`
+- ⚙️ Separate Jobs für **Frontend** und **Backend**
+- 🧩 **Matrix Builds** für Node.js-Versionen (**20.x** & **22.x**)
+- 🚀 Standard-Build-Schritte:
+    - `npm ci`
+    - `npm run lint --if-present`
+    - `npm test --if-present`
+    - `npm run build --if-present`
 
-## Expanding the ESLint configuration
+### 🛡️ Security / SAST
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- 🛡️ **SAST (Static Application Security Testing)** mit **GitHub CodeQL**
+- ✅ CodeQL so angepasst, dass es im **Monorepo** korrekt arbeitet (Frontend & Backend separat)
+- 🔐 Ziel: frühes Erkennen von Schwachstellen direkt im CI
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 🔒 Branch Protection & Quality Gates
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- 🔒 **Branch Protection Rules** aktiviert
+- ✅ Merge in `master` nur möglich, wenn Checks grün sind:
+    - `frontend (20.x / 22.x)`
+    - `backend (20.x / 22.x)`
+    - `SAST (CodeQL)`
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 🧪 Backend Test-Setup (Grundlage)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- ✅ Minimaler Health-Check (`/health`) im Backend
+- ✅ Test-Datei vorbereitet: `health.test.js`
+- 🎯 Ziel: CI kann echte API-Checks automatisiert ausführen
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 🧱 Saubere Server-Struktur (Best Practice)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- ✅ Express sauber getrennt in:
+    - `app.js` → Express-Konfiguration (Routes, Middleware)
+    - `server.js` → Startprozess (`listen`)
+- 🎯 Vorteil: **besser testbar**, sauberer Aufbau, production-tauglich
+
+---
+
+## 🧩 Tech Stack
+
+- ⚛️ **React + TypeScript** (Vite)
+- 🟢 **Node.js + Express** (API)
+- 🗄️ **MongoDB / Mongoose** (Backend Persistence)
+- 🔁 **GitHub Actions** (CI)
+- 🛡️ **CodeQL** (SAST)
+- 🔒 **Branch Protection** (Quality Gates)
+
+---
+
+## 📂 Projektstruktur (Monorepo)
+
+```text
+├── 📁 .github
+│   └── 📁 workflows
+│       └── ⚙️ ci.yml
+├── 📁 backend
+│   ├── 📁 src
+│   │   ├── 📁 config
+│   │   ├── 📁 controllers
+│   │   ├── 📁 db
+│   │   ├── 📁 middleware
+│   │   ├── 📁 models
+│   │   ├── 📁 routes
+│   │   ├── 📁 test
+│   │   │   └── 📄 health.test.js
+│   │   ├── 📁 utils
+│   │   ├── 📄 app.js
+│   │   └── 📄 server.js
+│   ├── ⚙️ package-lock.json
+│   └── ⚙️ package.json
+├── 📁 frontend
+│   ├── 📁 public
+│   │   └── 🖼️ vite.svg
+│   ├── 📁 src
+│   │   ├── 📁 assets
+│   │   │   └── 🖼️ react.svg
+│   │   ├── 🎨 App.css
+│   │   ├── 📄 App.tsx
+│   │   ├── 🎨 index.css
+│   │   └── 📄 main.tsx
+│   ├── 📄 eslint.config.js
+│   ├── 🌐 index.html
+│   ├── ⚙️ package-lock.json
+│   ├── ⚙️ package.json
+│   ├── ⚙️ tsconfig.app.json
+│   ├── ⚙️ tsconfig.json
+│   ├── ⚙️ tsconfig.node.json
+│   └── 📄 vite.config.ts
+├── ⚙️ .gitignore
+├── 📝 README.md
+└── ⚙️ package.json
 ```
