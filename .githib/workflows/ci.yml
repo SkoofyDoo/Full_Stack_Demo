@@ -4,7 +4,7 @@ name: 'Full-Stack_Demo'
 # Auslösung des Workflows bei Schritten:
 on:
     push:
-        branches: ['main']
+        branches: ['master']
 
 # Verhindere parallele Builds für den selben Branch
 concurrency:
