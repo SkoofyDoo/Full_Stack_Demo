@@ -121,6 +121,28 @@ jobs:
                   name: frontend-build-${{matrix.node-version}}
                   path: frontend/dist
                   if-no-files-found: ignore
+    # ========================================================
+    # SCA (OSV):
+    # ========================================================
+    sca:
+        name: SCA (OSV)
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: Install OSV-Scanner
+              run: |
+                  wget https://github.com/osv-scanner/osv-scanner/releases/latest/download/osv-scanner-linux-amd64
+                  chmod +x osv-scanner-linux-amd64
+                  mv osv-scanner-linux-amd64 /usr/local/bin/osv-scanner
+
+            - name: Run OSV-Scanner on Backend & Frontend
+              run: |
+                  osv-scanner scan -r backend frontend
 
     # ========================================================
     # SAST CodeQL:
@@ -170,20 +192,3 @@ jobs:
 
             - name: Perform CodeQL Analysis
               uses: github/codeql-action/analyze@v4
-    sca:
-        name: SCA (OSV)
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-
-            - name: OSV-Scanner
-              uses: google/osv-scanner-action@v2.3.0
-              with:
-                  scan-args: |-
-                      -r
-                      backend
-                      frontend
