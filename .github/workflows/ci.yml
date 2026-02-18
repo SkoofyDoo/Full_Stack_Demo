@@ -1,5 +1,5 @@
 # Workflow Name
-name: 'Full-Stack_Demo'
+name: 'Full_Stack_Demo'
 
 # Auslösung des Workflows bei Schritten:
 on:
