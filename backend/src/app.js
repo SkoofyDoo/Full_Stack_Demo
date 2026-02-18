@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 // CORS-Konfiguration: erlaubt requests vom Frontend
-app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
+app.use(cors({ origin: process.env.CLIENT_URL || 'localhost:5173' }));
 
 // Für JSON-Parsing
 app.use(express.json());
