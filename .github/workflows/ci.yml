@@ -170,3 +170,20 @@ jobs:
 
             - name: Perform CodeQL Analysis
               uses: github/codeql-action/analyze@v4
+    sca:
+        name: SCA (OSV)
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v4
+
+            - name: OSV-Scanner
+              uses: google/osv-scanner-action@v1
+              with:
+                  scan-args: |-
+                      -r
+                      backend
+                      frontend
