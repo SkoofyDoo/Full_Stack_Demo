@@ -1,10 +1,11 @@
-# 🚀 Full Stack Demo — CI/CD & Security Setup (Heute)
+# 🚀 Full Stack Demo — CI/CD & Security Setup 
+
 
 Dieses Repo zeigt eine moderne **Full-Stack Demo** mit **professionellem Dev-Workflow** (CI/CD + Security).  
 Fokus: **Monorepo**, **Quality Gates**, **SAST (CodeQL)** und **saubere Server-Struktur**.
 
 ---
-
+# **TAG 1:**
 ## ✅ Was heute umgesetzt wurde
 
 ### 🔧 CI/CD mit GitHub Actions
