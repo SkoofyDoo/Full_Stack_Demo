@@ -2,13 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-// Konfiguration von .env
+// Lade Variablen aus der .env-Datei in process.env
 dotenv.config();
 
+// Express inititalisieren
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// CORS Regeln
+// PORT fürs Server lauschen
+const PORT = process.env.PORT || 5000;
+
+// CORS-Konfiguration: erlaubt requests vom Frontend
 app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
 
 // Für JSON-Parsing
