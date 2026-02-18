@@ -110,7 +110,7 @@ jobs:
 
             # Speichere Build als Artifact
             - name: Upload Frontend Build Artifact
-              uses: actions/uploфd-artifact@v4
+              uses: actions/upload-artifact@v4
               with:
                   name: frontend-build-${{matrix.node-version}}
                   path: frontend/dist
