@@ -154,14 +154,14 @@ jobs:
               run: |
                   rm -rf node_modules
                   npm ci --omit=dev
-                  osv-scanner scar -r
+                  osv-scanner scan -r .
 
             - name: Scan Backend
               working-directory: backend
               run: |
                   rm -rf node_modules
                   npm ci --omit=dev
-                  osv-scanner scar -r
+                  osv-scanner scan -r .
 
     # ========================================================
     # SAST CodeQL:
