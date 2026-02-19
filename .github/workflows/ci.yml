@@ -7,17 +7,25 @@ on:
         branches: ['master']
     pull_request:
         branches: ['master']
+    workflow_dispatch:
 
 # Verhindere parallele Builds für den selben Branch
 concurrency:
     group: ci-${{github.ref}}
     cancel-in-progress: true
 
+permissions:
+    contents: read
+
+env:
+    NODE_LTS: '20'
+
 jobs:
     # ========================================================
-    # FRONTEND:
+    # BUILD + TEST
     # ========================================================
-    frontend:
+    build_test:
+        name: Build & Test
         # Ubuntu-VM als Runner
         runs-on: ubuntu-latest
 
@@ -27,11 +35,6 @@ jobs:
 
             matrix:
                 node-version: [20.x, 22.x]
-
-        # Default Arbeitsverzeichnis für alle folgende run-Befehle
-        defaults:
-            run:
-                working-directory: frontend
 
         steps:
             # Lade den Repository Code auf den Runner
@@ -45,88 +48,48 @@ jobs:
                   node-version: ${{matrix.node-version}}
                   # Aktiviere Cache für schnellere Build
                   cache: 'npm'
-                  cache-dependency-path: frontend/package-lock.json
+                  cache-dependency-path: |
+                      frontend/package-lock.json
+                      bakend/pacakge-lock.json
 
-            # Installiere der Dependencies
-            - name: Install Dependencies
-              run: npm ci
+            - name: Frontend:intall/lint/test/build
+              working-directory: frontend
+              run: |
+                  npm ci
+                  npm run lint --if-present
+                  npm test --if-present
+                  npm run build --if-present
 
-            # PLATZHALTER: Führe Linter aus (falls vorhanden)
-            - name: Run Linter
-              run: npm run lint --if-present
+            - name: Backend:intall/lint/test/build
+              working-directory: backend
+              run: |
+                  npm ci
+                  npm run lint --if-present
+                  npm test --if-present
+                  npm run build --if-present
 
-            # PLATZHALTER: Führe Tests aus (falls vorhanden)
-            - name: Test
-              run: npm test --if-present
-
-            # Frontend Aufbau
-            - name: Build Frontend
-              run: npm run build --if-present
-
-            # Speichere Build als Artifact
-            - name: Upload Frontend Build Artifact
+            - name: Upload dist (frontend)
               uses: actions/upload-artifact@v4
               with:
-                  name: frontend-build-${{matrix.node-version}}
+                  name: dist-frontend-${{matrix.node-version}}
                   path: frontend/dist
                   if-no-files-found: ignore
 
-    # ========================================================
-    # BACKEND:
-    # ========================================================
-    backend:
-        runs-on: ubuntu-latest
-
-        strategy:
-            fail-fast: false
-            matrix:
-                node-version: [20.x, 22.x]
-
-        defaults:
-            run:
-                working-directory: backend
-
-        steps:
-            - name: Checkout Repository
-              uses: actions/checkout@v4
-
-            # Node-Version Konfigurieren
-            - name: Install Node.js ${{matrix.node-version}}
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{matrix.node-version}}
-                  cache: npm
-                  cache-dependency-path: backend/package-lock.json
-
-            # Installiere der Dependencies
-            - name: Install Dependencies
-              run: npm ci
-
-            # PLATZHALTER: Führe Linter aus (falls vorhanden)
-            - name: Run Linter
-              run: npm run lint --if-present
-
-            # PLATZHALTER: Führe Tests aus (falls vorhanden)
-            - name: Test
-              run: npm test --if-present
-
-            # BACKEND Aufbau
-            - name: Build Backend
-              run: npm run build --if-present
-
-            # Speichere Build als Artifact
-            - name: Upload Backend Build Artifact
+            - name: Upload dist (backend)
               uses: actions/upload-artifact@v4
               with:
-                  name: backend-build-${{matrix.node-version}}
+                  name: dist-frontend-${{matrix.node-version}}
                   path: backend/dist
                   if-no-files-found: ignore
+
     # ========================================================
-    # SCA (OSV):
+    # SINGLE SMON + SCA (OSV):
     # ========================================================
-    sca:
-        name: SCA (OSV)
+    sbom_sca:
+        name: SBOM(CycloneDX) + SCA (OSV)
         runs-on: ubuntu-latest
+        # Braucht fertiges build_test zum Starten
+        needs: [build_test]
         permissions:
             contents: read
 
@@ -134,10 +97,10 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v4
 
-            - name: Setup Node
+            - name: Setup Node (LTS)
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: ${{env.NODE_LTS}}
                   cache: npm
                   cache-dependency-path: |
                       frontend/package-lock.json
@@ -149,19 +112,62 @@ jobs:
                   chmod +x osv-scanner
                   sudo mv osv-scanner /usr/local/bin/osv-scanner
 
-            - name: Scan Frontend
+            - name: Install CycloneDX CLI
+              run: |
+                  curl -L https://github.com/CycloneDX/cyclonedx-cli/releases/latest/download/cyclonedx-linux-x64 -o cyclonedx
+                  chmod +x cyclonedx
+                  sudo mv cyclonedx /usr/local/bin/cyclonedx
+
+            - name: Decide SBOM Mode
+              id: mode
+              run: |
+                  if [ "${{ github.event_name }}" = "pull_request" ]; then
+                    echo "omit_dev=false" >> $GITHUB_OUTPUT
+                  else
+                    echo "omit_dev=true" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Generate SBOM (frontend)
               working-directory: frontend
               run: |
-                  rm -rf node_modules package-lock.json
-                  npm install --omit=dev --package-lock-only
-                  osv-scanner scan --lockfile=package-lock.json
+                  rm -rf node_modules
+                  if [ "${{ steps.mode.outputs.omit_dev }}" = "true" ]; then
+                    npm ci --omit=dev
+                    npx --yes @cyclonedx/cyclonedx-npm --omit dev --output-file ../sbom-frontend.cdx.json --output-format json
+                  else
+                    npm ci
+                    npx --yes @cyclonedx/cyclonedx-npm --output-file ../sbom-frontend.cdx.json --output-format json
+                  fi
 
-            - name: Scan Backend
+            - name: Generate SBOM (backend)
               working-directory: backend
               run: |
-                  rm -rf node_modules package-lock.json
-                  npm install --omit=dev --package-lock-only
-                  osv-scanner scan --lockfile=package-lock.json
+                  rm -rf node_modules
+                  if [ "${{ steps.mode.outputs.omit_dev }}" = "true" ]; then
+                    npm ci --omit=dev
+                    npx --yes @cyclonedx/cyclonedx-npm --omit dev --output-file ../sbom-backend.cdx.json --output-format json
+                  else
+                    npm ci
+                    npx --yes @cyclonedx/cyclonedx-npm --output-file ../sbom-backend.cdx.json --output-format json
+                  fi
+
+            - name: Merge
+              run: |
+                  cyclonedx merge \
+                  --input-files sbom-frontend.cdx.json sbom-backend.cdx.json \
+                  --output-file sbom-fullstack.cdx.json
+
+            - name: OSV Scan
+              run: |
+                  --exit-code-on-vuln
+                  osv-scanner scan --sbom=sbom-fullstack.cdx.json
+
+            - name: Upload Single SBOM Artifact
+              uses: actions/upload-artifact@v4
+              with:
+                  name: sbom-fullstack-cyclonedx
+                  path: sbom-fullstack.cdx.json
+                  if-no-files-found: ignore
 
     # ========================================================
     # SAST CodeQL:
@@ -170,8 +176,8 @@ jobs:
         name: SAST (CodeQL)
         runs-on: ubuntu-latest
 
-        # Starte erst wenn frontend und backend fertig sind
-        needs: [frontend, backend]
+        # Starte erst wenn frontend/backend(build_test) und SBOM_SCA fertig sind
+        needs: [build_test, sbom_sca]
 
         permissions:
             actions: read
@@ -187,10 +193,10 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Setup Node
+            - name: Setup Node (LTS)
               uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: ${{env.NODE_LTS}}
                   cache: npm
                   cache-dependency-path: ${{matrix.project}}/package-lock.json
 
@@ -203,7 +209,7 @@ jobs:
             - name: Initialize CodeQL
               uses: github/codeql-action/init@v4
               with:
-                  languages: javascript-typescript
+                  languages: javascript
                   source-root: ${{matrix.project}}
 
             - name: Autobuild
