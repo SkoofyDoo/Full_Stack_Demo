@@ -162,7 +162,7 @@ jobs:
                   osv-scanner scan --sbom=sbom.json --format=json > osv.json || true
                   jq '
                   .results[].packages[].vulnerabilities[]
-                  | select(.severity[] | contains("HIGH") or contains("CRITICAL"))
+                  | select(.severity[] | contains("HIGH") or contains("CRITICAL") or contains ("MEDIUM"))
                   ' osv.json | grep . && exit 1 || exit 0
 
             - name: Upload Single SBOM Artifact
