@@ -152,16 +152,16 @@ jobs:
             - name: Scan Frontend
               working-directory: frontend
               run: |
-                  rm -rf node_modules
-                  npm ci --omit=dev
-                  osv-scanner scan -r .
+                  rm -rf node_modules package-lock.json
+                  npm install --omit=dev --package-lock-only
+                  osv-scanner scan --lockfile=package-lock.json
 
             - name: Scan Backend
               working-directory: backend
               run: |
-                  rm -rf node_modules
-                  npm ci --omit=dev
-                  osv-scanner scan -r .
+                  rm -rf node_modules package-lock.json
+                  npm install --omit=dev --package-lock-only
+                  osv-scanner scan --lockfile=package-lock.json
 
     # ========================================================
     # SAST CodeQL:
