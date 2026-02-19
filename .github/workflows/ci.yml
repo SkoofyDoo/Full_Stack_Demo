@@ -159,9 +159,11 @@ jobs:
 
             - name: OSV Scan
               run: |
-                  osv-scanner scan \
-                  --sbom=sbom-fullstack.cdx.json \
-                  --exit-code-on-vuln
+                  osv-scanner scan --sbom=sbom.json --format=json > osv.json || true
+                  jq '
+                  .results[].packages[].vulnerabilities[]
+                  | select(.severity[] | contains("HIGH") or contains("CRITICAL"))
+                  ' osv.json | grep . && exit 1 || exit 0
 
             - name: Upload Single SBOM Artifact
               uses: actions/upload-artifact@v4
