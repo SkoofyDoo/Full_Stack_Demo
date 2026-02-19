@@ -111,15 +111,15 @@ jobs:
               run: npm test --if-present
 
             # BACKEND Aufbau
-            - name: Build Frontend
+            - name: Build Backend
               run: npm run build --if-present
 
             # Speichere Build als Artifact
-            - name: Upload Frontend Build Artifact
+            - name: Upload Backend Build Artifact
               uses: actions/upload-artifact@v4
               with:
-                  name: frontend-build-${{matrix.node-version}}
-                  path: frontend/dist
+                  name: backend-build-${{matrix.node-version}}
+                  path: backend/dist
                   if-no-files-found: ignore
     # ========================================================
     # SCA (OSV):
@@ -134,15 +134,31 @@ jobs:
             - name: Checkout Repository
               uses: actions/checkout@v4
 
+            - name: Setup Node
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+                  cache: npm
+
             - name: Install OSV-Scanner
               run: |
                   curl -L https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64 -o osv-scanner
                   chmod +x osv-scanner
                   sudo mv osv-scanner /usr/local/bin/osv-scanner
 
-            - name: Run OSV-Scanner on Backend & Frontend
+            - name: Scan Frontend
+              working-directory: frontend
               run: |
-                  osv-scanner scan -r backend frontend
+                  rm -rf node_modules
+                  npm ci --omit=dev
+                  osv-scanner scar -r
+
+            - name: Scan Backend
+              working-directory: backend
+              run: |
+                  rm -rf node_modules
+                  npm ci --omit=dev
+                  osv-scanner scar -r
 
     # ========================================================
     # SAST CodeQL:
