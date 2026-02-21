@@ -12,7 +12,7 @@ import { errorHandler } from './middleware/errorHandler';
 export function createApp(config){
     // Express inititalisieren
     const app = express();
-    
+    const rateLimitCfg = config.rateLimit ?? { max: 100, windowMs: 15 * 60 * 1000 };
     // Helmet(HTTP Security Headers) als Middleware für mehr Sicherheit gegen XSS, Sane Headers, Clickjacking
     app.use(helmet())
 
@@ -32,8 +32,8 @@ export function createApp(config){
     
     // RateLimiter
     app.use(rateLimit({
-        windowMs: config.rateLimit.windowMs,
-        max: config.rateLimit.max,
+        windowMs: rateLimitCfg.windowMs,
+        max: rateLimitCfg.max,
         standardHeaders: 'draft-8',
         legacyHeaders: false,
 
