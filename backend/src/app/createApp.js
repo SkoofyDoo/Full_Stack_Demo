@@ -7,9 +7,7 @@ import morgan from 'morgan'
 import { healthRoutes } from './routes/health.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
-import { loadConfig } from "../config/config";
 
-const config = loadConfig();
 
 export function createApp(config){
     // Express inititalisieren
@@ -20,7 +18,7 @@ export function createApp(config){
 
     // CORS-Konfiguration: erlaubt requests vom Frontend
     app.use(cors({ 
-    origin: config.clientURL, 
+    origin: config.clientUrl, 
     methods: ['GET','POST','PUT','DELETE',]
     }));
     // Für JSON-Parsing
