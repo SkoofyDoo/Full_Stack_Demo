@@ -5,8 +5,9 @@ Fokus: **Monorepo**, **Quality Gates**, **SAST (CodeQL)** und **saubere Server-S
 
 # **TAG 3:**
 
-
 ## ✅ Was heute umgesetzt wurde
+
+der dritte Entwicklungstag stand vollständig im Zeichen von Security-Härtung, Supply-Chain-Shutz und einer sauberen, skalierbaren Backend-Architektur.
 
 ### Schritt 1: Dependency Review für Pull-Request
 
@@ -23,10 +24,23 @@ Diese läuft ausschließlich bei Pull Request und überprüft:
 Viele Sicherheitsprobleme entstehen nicht durch eigenen Code, sondern durch neue Libraries.
 
 ### Schritt 2: Secret Scanning (Gitleaks)
+In die Pipeline wurde zusätzlich Gitleaks integriert.
 
-API_KEYS | AWS_KEYS | TOKENS | PASSWÖRTER | PRIVATE_KEYS
+Gescannt werden unter anderem:
 
-Secrets in Repo sind einer der häufigsten Sicherheitsvorfälle.  
+🔑 API-Keys
+
+☁ AWS-Zugangsdaten
+
+🔐 Tokens
+
+🗝 Private Keys
+
+🔒 Passwörter
+
+**Warum ist das wichtig?**
+
+Secrets im Repository gehören zu den häufigsten und teuersten Sicherheitsvorfällen.  
 
 ### Schritt 3: SHA Pinning 
 
