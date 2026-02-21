@@ -1,7 +1,7 @@
 
 import  request  from "supertest";
 import {createApp} from '../app/createApp'
-import rateLimit from "express-rate-limit";
+
 
 const config = {
     env: 'test',
