@@ -1,10 +1,17 @@
 import request from 'supertest';
-import app from '../app';
+import { createApp } from '../app/createApp';
+
+
+const config = {
+    env: 'test',
+    clientUrl: 'http://localhost:5173',
+}
 
 
 // HealthCheck-Test
 describe('GET /health', () => {
     it('Muss 200 zurückgeben', async () => {
+        const app = createApp(config)
         const res = await request(app).get('/health');
         
         expect(res.statusCode).toBe(200);

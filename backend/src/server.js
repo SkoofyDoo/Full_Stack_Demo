@@ -1,12 +1,13 @@
-import app from './app';
-import dotenv from 'dotenv';
+import { createApp } from "./app/createApp";
+import { loadConfig } from "./config/config";
 
-dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const config = loadConfig();
+const app = createApp(config);
+
 
 // Server-Start
-const server = app.listen(PORT, () => console.log(`Backend läuft auf dem Port: ${PORT}`));
+const server = app.listen(config.port, () => console.log(`Backend läuft auf dem Port: ${config.port}`));
 
 // Fehlerbehandlung beim Server-Start
 server.on('error', (error) => {
