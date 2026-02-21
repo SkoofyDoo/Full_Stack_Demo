@@ -2,13 +2,15 @@
 import  request  from "supertest";
 import {createApp} from '../app/createApp'
 
+const config = {
+    env: 'test',
+    clientUrl: 'http://localhost:5173',
+    rateLimit: {max: 3, windowMs: 60_000}
+}
+
 describe('Rate-Limit', () => {
     it('Muss 429 zurückegeben nach dem Erreichen des Limits', async() => {
-        const app = createApp({
-            env: 'test',
-            clientUrl: 'http://localhost:5173',
-            rateLimit: {max: 3, windowMs: 60_000}
-        })
+        const app = createApp(config)
  
         await request(app).get('/unknown1');
         await request(app).get('/unknown2');
