@@ -2,14 +2,6 @@
 import  request  from "supertest";
 import {createApp} from '../app/createApp'
 
-
-const config = {
-    env: 'test',
-    clientUrl: 'http://localhost:5173',
-}
-
-
-
 describe('Rate-Limit', () => {
     it('Muss 429 zurückegeben nach dem Erreichen des Limits', async() => {
         const app = createApp({
