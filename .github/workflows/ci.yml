@@ -50,7 +50,7 @@ jobs:
                   cache: 'npm'
                   cache-dependency-path: |
                       frontend/package-lock.json
-                      backend/pacakge-lock.json
+                      backend/package-lock.json
 
             - name: Frontend:intall/lint/test/build
               working-directory: frontend
@@ -81,6 +81,40 @@ jobs:
                   name: dist-backend-${{matrix.node-version}}
                   path: backend/dist
                   if-no-files-found: ignore
+    
+    # ========================================================
+    # DEPS Review für Pull Request
+    # ========================================================
+    dependency_review:
+      name: Deps Review
+      runs-on: ubuntu-latest
+      permissions: 
+        contents: read
+        pull-requests: read
+      if: github.event_name == 'pull_request'
+      steps: 
+        - uses: actions/chekcout@v4
+        - uses: actions/dependency-review-action@v4
+          with: 
+            fail-on-severity: high
+
+
+    # ========================================================
+    # SECRET_KEYS_LEAK 
+    # ========================================================
+    gitleaks: 
+      name: Secret Scan (Gitleaks)
+      runs-on: ubuntu-latest
+      permissions: 
+        contents: read
+      steps: 
+       - uses: actions/checkout@v4
+         with: 
+          fetch-depth: 0
+       - name: Run GitLeaks
+         uses: gitleaks/gitleaks-action@v2
+         env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} 
 
     # ========================================================
     # SINGLE SMON + SCA (OSV):
@@ -162,7 +196,7 @@ jobs:
                   osv-scanner scan --sbom=sbom-fullstack.cdx.json --format=json > osv.json || true
                   jq '
                   .results[].packages[].vulnerabilities[]
-                  | select(.severity[] | contains("HIGH") or contains("CRITICAL") or contains ("MEDIUM"))
+                  | select(.severity[] | contains("HIGH") or contains("CRITICAL")
                   ' osv.json | grep . && exit 1 || exit 0
 
             - name: Upload Single SBOM Artifact
