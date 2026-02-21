@@ -1,10 +1,25 @@
 version: 2
 updates:
-    - package-ecosystem: 'npm'
+      # Frontend
+    - package-ecosystem: 'npm-and-yarn'
       directory: '/frontend'
       shedule:
           interval: 'weekly'
-    - pacakge-ecosystem: 'npm'
+      labels: 
+      - 'dependencies'
+      - 'security'
+      # Backend
+    - pacakge-ecosystem: 'npm-and-yarn'
       directory: '/backend'
       schedule:
           interval: 'weekly'
+      labels: 
+      - 'dependencies'
+      - 'security'
+    - package-ecosystem: 'github-actions'
+      directory: "/"
+      schedule:
+        interval: "weekly"
+      labels:
+      - 'dependencies'
+      - 'ci'
