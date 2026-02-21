@@ -50,7 +50,7 @@ jobs:
                   cache: 'npm'
                   cache-dependency-path: |
                       frontend/package-lock.json
-                      bakend/pacakge-lock.json
+                      backend/pacakge-lock.json
 
             - name: Frontend:intall/lint/test/build
               working-directory: frontend
@@ -78,7 +78,7 @@ jobs:
             - name: Upload dist (backend)
               uses: actions/upload-artifact@v4
               with:
-                  name: dist-frontend-${{matrix.node-version}}
+                  name: dist-backend-${{matrix.node-version}}
                   path: backend/dist
                   if-no-files-found: ignore
 
@@ -159,7 +159,7 @@ jobs:
 
             - name: OSV Scan
               run: |
-                  osv-scanner scan --sbom=sbom.json --format=json > osv.json || true
+                  osv-scanner scan --sbom=sbom-fullstack.cdx.json --format=json > osv.json || true
                   jq '
                   .results[].packages[].vulnerabilities[]
                   | select(.severity[] | contains("HIGH") or contains("CRITICAL") or contains ("MEDIUM"))
