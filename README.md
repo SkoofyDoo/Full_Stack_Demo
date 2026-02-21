@@ -58,35 +58,91 @@ Dieser Vorgang dient dem Abwehr von Supply Chain Angriffen.
 
 Mit SHA-Pinning wird kein automatischen Update ohne Kontrolle durchgeführt und man hat reproduzierbare Builds.
 
-## FAZIZ ##
+### Schritt 4: Architektur-Refactoring des Backends
 
-Die Pipeline enthält nun mehrere Security-Layer:
+Parallel zur Security-Härtung habe ich die Backend-Architektur auf ein professionelles Niveau gebracht durch:
+        - Einführung einer zentrallen Konfigurationsschicht
+        - Einführung einer App-Factory(createApp)
 
-🧪 Build & Tests
+Vorteile dieser Architektur:
+
+🧪 Bessere Testbarkeit (Konfiguration injizierbar)
+
+🔍 Klare Verantwortlichkeiten
+
+🔒 Stabilere Produktionsumgebung
+
+🚀 Skalierbarkeit für zukünftige Features (DB, Auth, JWT etc.)       
+
+### 🛡️ Gesamter Security-Stack der Pipeline
+
+Die CI/CD-Pipeline enthält nun mehrere unabhängige Security-Layer:
+
+🧪 Build & Tests (Matrix Node 20/22)
 
 🛡️ CodeQL (SAST)
 
-📦 SBOM + OSV Scan
+📦 SBOM (CycloneDX)
 
-🔎 Dependency Review
+🔎 OSV Vulnerability Scan
 
-🔐 Secret Scanning
+🔎 Dependency Review (PR)
 
-🔒 SHA Pinning
+🔐 Secret Scanning (Gitleaks)
+
+🔒 SHA Pinning aller Actions
 
 🚦 Branch Protection Rules
 
-Das bedeutet:
-
-Kein Merge bei kritischen Dependency-Problemen
-
-Kein Merge bei geleakten Secrets
-
-Kein Merge bei SAST Findings
-
-Keine unsicheren GitHub Actions durch Supply Chain Drift
-
-
+## Aktuelles Projekt Tree
+```
+├── 📁 .github
+│   ├── 📁 workflows
+│   │   └── ⚙️ ci.yml
+│   └── ⚙️ dependabot.yml
+├── 📁 backend
+│   ├── 📁 src
+│   │   ├── 📁 app
+│   │   │   ├── 📁 middleware
+│   │   │   │   ├── 📄 errorHandler.js
+│   │   │   │   └── 📄 notFound.js
+│   │   │   ├── 📁 routes
+│   │   │   │   └── 📄 health.routes.js
+│   │   │   └── 📄 createApp.js
+│   │   ├── 📁 config
+│   │   │   └── 📄 config.js
+│   │   ├── 📁 test
+│   │   │   ├── 📄 health.test.js
+│   │   │   └── 📄 ratelimit.test.js
+│   │   └── 📄 server.js
+│   ├── ⚙️ package-lock.json
+│   └── ⚙️ package.json
+├── 📁 frontend
+│   ├── 📁 public
+│   │   └── 🖼️ vite.svg
+│   ├── 📁 src
+│   │   ├── 📁 assets
+│   │   │   └── 🖼️ react.svg
+│   │   ├── 🎨 App.css
+│   │   ├── 📄 App.tsx
+│   │   ├── 🎨 index.css
+│   │   └── 📄 main.tsx
+│   ├── 📄 eslint.config.js
+│   ├── 🌐 index.html
+│   ├── ⚙️ package-lock.json
+│   ├── ⚙️ package.json
+│   ├── ⚙️ tsconfig.app.json
+│   ├── ⚙️ tsconfig.json
+│   ├── ⚙️ tsconfig.node.json
+│   └── 📄 vite.config.ts
+├── 📁 security
+│   └── 📄 osv-baseline-txt
+├── ⚙️ .gitignore
+├── 📝 README.md
+├── 📝 SECURITY.md
+├── ⚙️ package-lock.json
+└── ⚙️ package.json
+```
 --- 
 
 # **TAG 2:**
