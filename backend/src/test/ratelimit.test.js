@@ -19,7 +19,7 @@ describe('Rate-Limit', () => {
         })
  
         await request(app).get('/unknown1');
-        await request(app).get('/inknown2');
+        await request(app).get('/unknown2');
         await request(app).get('/unknown3');
         
         const response = await request(app).get('/unknown4')
