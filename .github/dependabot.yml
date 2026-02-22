@@ -9,6 +9,10 @@ updates:
       directory: '/frontend'
       schedule:
           interval: 'weekly'
+      on:
+      pull_request:
+        paths:
+          - frontend/**
       open-pull-request-limit: 1
       labels: 
         - 'dependencies'
@@ -22,12 +26,16 @@ updates:
       directory: '/backend'
       schedule:
           interval: 'weekly'
+      on:
+        pull_request:
+          paths:
+            - backend/**
       open-pull-request-limit: 1
       labels: 
         - 'dependencies'
         - 'security'
       groups:
-        frontend-deps: 
+        backend-deps: 
           patterns:
             - "*"
       # GitHub Actions
@@ -35,11 +43,15 @@ updates:
       directory: "/"
       schedule:
         interval: "weekly"
+      on:
+        pull_request:
+          paths:
+            - .github/workflows/**
       open-pull-request-limit: 1
       labels:
         - 'dependencies'
         - 'ci'
       groups:
-      frontend-deps: 
-        patterns:
-          - "*"
+        ci-deps: 
+          patterns:
+            - "*"
