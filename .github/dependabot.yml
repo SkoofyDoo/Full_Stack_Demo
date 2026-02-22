@@ -1,3 +1,7 @@
+# Dependabot: aktualisiert die Abhängigkeiten 
+# und schickt Pull Requests nach Security Fixes
+# WICHTING: Limits auf Pull Requests zu setzen!!!
+
 version: 2
 updates:
       # Frontend
@@ -5,21 +9,37 @@ updates:
       directory: '/frontend'
       schedule:
           interval: 'weekly'
+      open-pull-request-limit: 1
       labels: 
         - 'dependencies'
         - 'security'
+      groups:
+        frontend-deps: 
+          patterns:
+            - "*"
       # Backend
     - package-ecosystem: 'npm'
       directory: '/backend'
       schedule:
           interval: 'weekly'
+      open-pull-request-limit: 1
       labels: 
         - 'dependencies'
         - 'security'
+      groups:
+        frontend-deps: 
+          patterns:
+            - "*"
+      # GitHub Actions
     - package-ecosystem: 'github-actions'
       directory: "/"
       schedule:
         interval: "weekly"
+      open-pull-request-limit: 1
       labels:
         - 'dependencies'
         - 'ci'
+      groups:
+      frontend-deps: 
+        patterns:
+          - "*"
