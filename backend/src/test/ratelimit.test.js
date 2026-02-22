@@ -7,7 +7,7 @@ const config = {
     clientUrl: 'http://localhost:5173',
     rateLimit: {max: 3, windowMs: 60_000}
 }
-
+// RateLimit Test
 describe('Rate-Limit', () => {
     it('Muss 429 zurückegeben nach dem Erreichen des Limits', async() => {
         const app = createApp(config)

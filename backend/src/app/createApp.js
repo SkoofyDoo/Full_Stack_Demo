@@ -8,6 +8,8 @@ import { healthRoutes } from './routes/health.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
+import { apiV1Rotes } from './routes/api.v1.routes';
+
 
 export function createApp(config){
     // Express inititalisieren
@@ -29,6 +31,9 @@ export function createApp(config){
 
     // HealthCheck
     app.use(healthRoutes())
+
+    // API VERSION 1
+    app.use('/api/v1', apiV1Rotes(), rateLimit)
     
     // RateLimiter
     app.use(rateLimit({
