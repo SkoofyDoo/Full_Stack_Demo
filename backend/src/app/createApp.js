@@ -8,7 +8,7 @@ import { healthRoutes } from './routes/health.routes';
 import { notFound } from './middleware/notFound';
 import { errorHandler } from './middleware/errorHandler';
 
-import { apiV1Rotes } from './routes/api.v1.routes';
+import { apiV1Routes } from './routes/api.v1.routes';
 
 
 export function createApp(config){
@@ -32,21 +32,25 @@ export function createApp(config){
     // HealthCheck
     app.use(healthRoutes())
 
-    // API VERSION 1
-    app.use('/api/v1', apiV1Rotes(), rateLimit)
-    
     // RateLimiter
-    app.use(rateLimit({
+    const apiLimiter = rateLimit({
         windowMs: rateLimitCfg.windowMs,
         max: rateLimitCfg.max,
         standardHeaders: 'draft-8',
         legacyHeaders: false,
 
-    }))
+    })
 
-    // ============
-    // ErrorHandler
-    // ============
+    // ==============================================================
+    // API VERSION 1
+    // ==============================================================
+    app.use('/api/v1', apiLimiter, apiV1Routes())
+
+
+
+    // ==============================================================
+    // Error Handler
+    // ==============================================================
     app.use(notFound)
     app.use(errorHandler)
 
