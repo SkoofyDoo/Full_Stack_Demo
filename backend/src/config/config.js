@@ -29,6 +29,10 @@ function required(key) {
     return value;
 }
 
+const env = (process.env.NODE_ENV || 'development').trim()
+const isTest = env === 'test'
+const isProd = env === 'production'
+
 // Single Source of Truth (Zentraler Verwalter)
 export const config = Object.freeze({
     // Aktuelle Laufzeitumgebung
@@ -47,4 +51,13 @@ export const config = Object.freeze({
         max: toNumber(process.env.RATE_LIMIT_MAX, 100),
         windowMs: toNumber(process.env.RATE_LIMIT_WINDOW_MS, 15 * 60 * 1000)
     },
+    
+    // Konfiguration für DB PostgreSQL
+    db: {
+        host: isTest ? required('TEST_DB_HOST') : required('DB_HOST'),
+        port: isTest ? required('TEST_DB_PORT') : required('DB_PORT'),
+        user: isTest ? required('TEST_DB_USER') : required('DB_USER'),
+        password: isTest ? required('TEST_DB_PASSWORD') : required('DB_PASSWORD'),
+        name: isTest ? required('TEST_DB_NAME') : required('DB_NAME'),
+    }
 });
