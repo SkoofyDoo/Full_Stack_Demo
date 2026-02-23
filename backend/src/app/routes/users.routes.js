@@ -1,7 +1,7 @@
 import {Router} from 'express'
-import {validate} from '../middleware/validate'
-import {createUserSchema, userIdParamsSchema} from '../schemas/users.schema'
-import {usersController} from '../controllers/users.controllers'
+import {validate} from '../middleware/validate.js'
+import {createUserSchema, userIdParamsSchema} from '../schemas/users.schema.js'
+import {usersController} from '../controllers/users.controllers.js'
 
 export function usersRoutes(){
     const router = Router();

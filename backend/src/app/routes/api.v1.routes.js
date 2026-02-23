@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import {usersRoutes} from './users.routes'
+import {usersRoutes} from './users.routes.js'
 
 export function apiV1Routes(){
     const router = Router();

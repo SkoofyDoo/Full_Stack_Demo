@@ -1,4 +1,4 @@
-import {usersService} from '../services/users.service'
+import {usersService} from '../services/users.service.js'
 
 
 export const usersController = {

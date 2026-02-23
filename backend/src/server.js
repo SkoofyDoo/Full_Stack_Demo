@@ -1,13 +1,21 @@
-import { createApp } from "./app/createApp";
-import { loadConfig } from "./config/config";
+
+import { createApp } from "./app/createApp.js";
+import { config } from "./config/config.js";
 
 
-const config = loadConfig();
+
+
+
+console.log('DB Conntected')
+
+
 const app = createApp(config);
 
 
 // Server-Start
 const server = app.listen(config.port, () => console.log(`Backend läuft auf dem Port: ${config.port}`));
+
+
 
 // Fehlerbehandlung beim Server-Start
 server.on('error', (error) => {

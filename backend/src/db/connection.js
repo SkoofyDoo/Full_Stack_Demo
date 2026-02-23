@@ -1,4 +1,4 @@
-import {config} from '../config/config'
+import {config} from '../config/config.js'
 
 export function conntectDB(){
     const {user, password, host, port, name} = config.db

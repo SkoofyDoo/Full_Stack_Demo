@@ -22,7 +22,7 @@ function toNumber(value, fallback) {
  * @throws {Error} Falls die Variable nicht definiert ist
  */
 function required(key) {
-    const value = (process.env[key]).trim();
+    const value = (process.env[key]);
     if (!value) {
         throw new Error(`Konfiguration Fehler: ENV Variable "${key}" fehlt`)
     }

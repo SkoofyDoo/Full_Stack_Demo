@@ -4,11 +4,11 @@ import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import morgan from 'morgan'
 
-import { healthRoutes } from './routes/health.routes';
-import { notFound } from './middleware/notFound';
-import { errorHandler } from './middleware/errorHandler';
+import { healthRoutes } from './routes/health.routes.js';
+import { notFound } from './middleware/notFound.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
-import { apiV1Routes } from './routes/api.v1.routes';
+import { apiV1Routes } from './routes/api.v1.routes.js';
 
 
 export function createApp(config){
