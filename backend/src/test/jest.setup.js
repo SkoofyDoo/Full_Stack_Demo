@@ -1,8 +1,3 @@
 import dotenv from 'dotenv'
 
 dotenv.config({path: '.env.test'})
-
-export default {
-    testEnvironment: 'node',
-    setupFiles: ['<rootDir>/src/test/jest.setup.js']
-}
