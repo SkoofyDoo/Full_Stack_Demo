@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "test": "cross-env NODE_ENV=test node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
         "test:ratelimit": "node --experimental-vm-modules node_modules/jest/bin/jest.js src/test/ratelimit.test.js",
         "db:migrate": "node src/db/migrate.js",
         "db:migrate:test": "cross-env NODE_ENV=test node src/db/migrate.js",
