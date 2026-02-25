@@ -1,5 +1,5 @@
-export function errorHandler(err, res, req, next) {
+export function errorHandler(err, req, res, next) {
     console.error(err)
-
-    res.status(err.status || 500).json({message: err.message || 'Server Fehler'})
+    const status = err.statusCode || err.status || 500
+    return res.status(status).json({message: err.message || 'Server Fehler'})
 };

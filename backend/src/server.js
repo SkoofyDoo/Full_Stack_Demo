@@ -5,12 +5,12 @@ import { config } from "./config/config.js";
 
 
 
-
+// DB Check
 console.log('DB Conntected')
 
 
-const app = createApp(config);
 
+const app = createApp(config);
 
 // Server-Start
 const server = app.listen(config.port, () => console.log(`Backend läuft auf dem Port: ${config.port}`));
