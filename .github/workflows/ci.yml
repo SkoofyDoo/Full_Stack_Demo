@@ -29,6 +29,22 @@ jobs:
         # Ubuntu-VM als Runner
         runs-on: ubuntu-latest
 
+        services:
+          postgres_test:
+            image: postgres:16
+            env: 
+              POSTGRES_USER: db_test_admin
+              POSTGRES_PASSWORD: password
+              POSTGRES_DB: test_demo_db
+            ports:
+            - 5433:5432
+          options: >-
+            --health-cmd="pg_isready -U db_test_db"
+            --health-interval=3s
+            --health-timeout=3s
+            --health-retries=20
+              
+
         strategy:
             # Stoppe nicht alle Matrix-Jobs bei erstem Fehler
             fail-fast: false
@@ -64,6 +80,7 @@ jobs:
               working-directory: backend
               run: |
                   npm ci
+                  node src/db/migrate.js
                   npm run lint --if-present
                   npm test --if-present
                   npm run build --if-present
