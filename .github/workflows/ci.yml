@@ -59,7 +59,7 @@ jobs:
 
             # Installiere der jeweiligen Node-Version aus der Matrix
             - name: Install Node.js ${{matrix.node-version}}
-              uses: actions/setup-node@efcb663fc60e97218a2b2d6d827f7830f164739e
+              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
               with:
                   node-version: ${{matrix.node-version}}
                   # Aktiviere Cache für schnellere Build
@@ -86,14 +86,14 @@ jobs:
                   npm run build --if-present
 
             - name: Upload dist (frontend)
-              uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+              uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
               with:
                   name: dist-frontend-${{matrix.node-version}}
                   path: frontend/dist
                   if-no-files-found: ignore
 
             - name: Upload dist (backend)
-              uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+              uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
               with:
                   name: dist-backend-${{matrix.node-version}}
                   path: backend/dist
@@ -111,7 +111,7 @@ jobs:
       if: github.event_name == 'pull_request'
       steps: 
         - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        - uses: actions/dependency-review-action@dea54b434272cc45b0e9ff17d5f0da4d8676f07d
+        - uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48
           with: 
             fail-on-severity: high
 
@@ -149,7 +149,7 @@ jobs:
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
             - name: Setup Node (LTS)
-              uses: actions/setup-node@efcb663fc60e97218a2b2d6d827f7830f164739e
+              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
               with:
                   node-version: ${{env.NODE_LTS}}
                   cache: npm
@@ -217,7 +217,7 @@ jobs:
                   ' osv.json | grep . && exit 1 || exit 0
 
             - name: Upload Single SBOM Artifact
-              uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+              uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
               with:
                   name: sbom-fullstack-cyclonedx
                   path: sbom-fullstack.cdx.json
@@ -248,7 +248,7 @@ jobs:
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
             - name: Setup Node (LTS)
-              uses: actions/setup-node@efcb663fc60e97218a2b2d6d827f7830f164739e
+              uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f
               with:
                   node-version: ${{env.NODE_LTS}}
                   cache: npm
@@ -261,13 +261,13 @@ jobs:
 
             # CodeQL auf den jeweiligen Ordner fokussieren
             - name: Initialize CodeQL
-              uses: github/codeql-action/init@710e2945787622b429f8982cacb154faa182de18
+              uses: github/codeql-action/init@335f08ccc600a576b9385bcaee47dc2635bebc1c
               with:
                   languages: javascript
                   source-root: ${{matrix.project}}
 
             - name: Autobuild
-              uses: github/codeql-action/autobuild@710e2945787622b429f8982cacb154faa182de18
+              uses: github/codeql-action/autobuild@335f08ccc600a576b9385bcaee47dc2635bebc1c
 
             - name: Perform CodeQL Analysis
-              uses: github/codeql-action/analyze@710e2945787622b429f8982cacb154faa182de18
+              uses: github/codeql-action/analyze@335f08ccc600a576b9385bcaee47dc2635bebc1c
